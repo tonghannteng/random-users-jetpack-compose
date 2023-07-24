@@ -2,6 +2,8 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    id("kotlin-kapt")
+    alias(libs.plugins.daggerHilt)
 }
 
 android {
@@ -41,7 +43,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.3"
+        kotlinCompilerExtensionVersion = "1.5.0"
     }
     packaging {
         resources {
@@ -67,4 +69,33 @@ dependencies {
     androidTestImplementation(libs.ui.test.junit4)
     debugImplementation(libs.ui.tooling)
     debugImplementation(libs.ui.test.manifest)
+
+    // NavHost
+    implementation(libs.androidx.navigation.compose)
+
+    // Gson
+    implementation(libs.google.code.gson)
+
+    //Modern Splash Screen
+    implementation(libs.androidx.core.splashscreen)
+
+    //dagger-hilt
+    implementation(libs.google.dagger.hilt)
+    kapt(libs.google.dagger.hilt.compiler)
+
+    // Retrofit
+    implementation(libs.squareup.retrofit2.retrofit)
+    implementation(libs.squareup.retrofit2.retrofit.converter)
+    implementation(libs.squareup.okhttp.alpha)
+
+    //coil
+    implementation(libs.io.coil.kt)
+
+    //Shimmer Layout
+    implementation(libs.github.skydoves)
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
