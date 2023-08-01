@@ -3,44 +3,29 @@ package com.example.randomusers
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.randomusers.ui.theme.RandomUsersTheme
+import androidx.activity.viewModels
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.randomusers.navigation.NavigationAppHost
+import com.example.randomusers.viewmodel.UserResultViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * @author: tonghann.teng
+ * @since: 7/25/23
+ */
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: UserResultViewModel by viewModels()
+    private lateinit var navController: NavHostController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RandomUsersTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
-            }
+            navController = rememberNavController()
+            viewModel.getAllResults()
+            NavigationAppHost(navController = navController, viewModel = viewModel)
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    RandomUsersTheme {
-        Greeting("Android")
     }
 }
