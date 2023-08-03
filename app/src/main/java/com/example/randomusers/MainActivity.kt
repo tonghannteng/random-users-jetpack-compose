@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             navController = rememberNavController()
-            viewModel.getAllResults()
+            viewModel.getAllResultsFlow()
             NavigationAppHost(navController = navController, viewModel = viewModel)
         }
     }

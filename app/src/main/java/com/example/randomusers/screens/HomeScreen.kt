@@ -13,17 +13,22 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
+import com.example.randomusers.common.UiDataState
 import com.example.randomusers.model.presentationlayer.UserInfo
 import com.example.randomusers.navigation.Destination
+import com.example.randomusers.ui.theme.Purple40
 import com.example.randomusers.viewmodel.UserResultViewModel
 
 /**
@@ -37,19 +42,45 @@ fun HomeScreen(
 
     val userResult = viewModel.userResult.collectAsState().value
 
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        val userInfo = UserInfo.mapUserModelToUserInfo(userModel = userResult)
-        if (userInfo.isNotEmpty()) {
-            items(userInfo.size) {
-                UserRow(
-                    viewModel = viewModel,
-                    userInfo = userInfo[it],
-                    navController = navController
-                )
+    when (userResult) {
+        is UiDataState.Loading -> {
+            ProgressBarScreen()
+        }
+        is UiDataState.Error -> { }
+
+        is UiDataState.Loaded -> {
+            LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                val userInfo = UserInfo.mapUserModelToUserInfo(userModel = userResult.data)
+                if (userInfo.isNotEmpty()) {
+                    items(userInfo.size) {
+                        UserRow(
+                            viewModel = viewModel,
+                            userInfo = userInfo[it],
+                            navController = navController
+                        )
+                    }
+                }
             }
         }
+
+    }
+}
+
+@Composable
+fun ProgressBarScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        CircularProgressIndicator(
+            modifier = Modifier.padding(16.dp),
+            color = Purple40,
+            strokeWidth = Dp(value = 4F)
+        )
+
     }
 }
 

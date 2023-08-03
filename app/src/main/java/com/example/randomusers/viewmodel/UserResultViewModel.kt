@@ -3,12 +3,14 @@ package com.example.randomusers.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.randomusers.common.UiDataState
 import com.example.randomusers.model.datalayer.UserModel
 import com.example.randomusers.model.presentationlayer.UserInfo
 import com.example.randomusers.repository.UserResultRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +26,7 @@ class UserResultViewModel @Inject constructor(private val repository: UserResult
         private const val TAG = "UserResultViewModel"
     }
 
-    private val _userResult = MutableStateFlow<UserModel?>(null)
+    private val _userResult = MutableStateFlow<UiDataState<UserModel>>(UiDataState.Loading())
     val userResult = _userResult.asStateFlow()
 
     private val _userDetails = MutableStateFlow<UserInfo?>(null)
@@ -33,10 +35,15 @@ class UserResultViewModel @Inject constructor(private val repository: UserResult
     /**
      * Get all users result.
      */
-    fun getAllResults() = viewModelScope.launch {
-        val result = repository.getAllResults()
-        _userResult.value = result
-        Log.d(TAG, result.toString())
+    fun getAllResultsFlow() = viewModelScope.launch {
+        repository.getAllResultsFlow()
+            .catch {
+                _userResult.value = UiDataState.Error(it.message.toString())
+                Log.e(TAG, it.message.toString())
+            }
+            .collect {
+                _userResult.value = UiDataState.Loaded(it)
+            }
     }
 
     /**

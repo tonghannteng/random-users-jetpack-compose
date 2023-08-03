@@ -1,6 +1,12 @@
 package com.example.randomusers.repository
 
 import com.example.randomusers.api.ApiService
+import com.example.randomusers.common.UiDataState
+import com.example.randomusers.model.datalayer.UserModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -15,4 +21,12 @@ class UserResultRepository @Inject constructor(private val apiService: ApiServic
      * Get all Results from [ApiService].
      */
     suspend fun getAllResults() = apiService.getAllResults()
+
+    fun getAllResultsFlow() : Flow<UserModel> {
+        return flow {
+            emit(apiService.getAllResults())
+        }.map {
+            it
+        }
+    }
 }
